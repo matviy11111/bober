@@ -1,0 +1,76 @@
+from tkinter import *
+from tkinter import ttk
+import random
+import time
+
+root = Tk()
+root.title('Emblas tetris game')
+
+x_init = root.winfo_pointerx()
+y_init = root.winfo_pointery()
+WIDTH = root.winfo_screenwidth()
+HEIGHT = root.winfo_screenheight()
+basicbox = Canvas(root, width=WIDTH, height=HEIGHT)
+basicbox.pack()
+gameboard = basicbox.create_rectangle(WIDTH/6, 0, WIDTH * 0.84, 720,
+outline='gray', fill='white', width=4)
+
+def countpointsinfig(): #redraws each figure as it is falling, updating all coordinates
+    global x0, y0, x1, y1, x2, y2, x3, y3
+    numpoints = len(points)
+    if numpoints == 8:
+        x0, y0, x1, y1, x2, y2, x3, y3  = basicbox.coords(drawshape)
+        print(x0, y0, x1, y1, x2, y2, x3, y3)
+
+
+def I_shape():
+    global drawshape, points
+    points = [WIDTH/2 - 10, 0,#0
+              WIDTH/2 + 10, 0,#1
+              WIDTH/2 + 10, 80,#2
+              WIDTH/2 - 10, 80,#3
+              ]
+    drawshape = basicbox.create_polygon(points, outline='yellow', fill='yellow')
+
+
+def O_shape():
+    global drawshape, points
+    points = [WIDTH/2 - 20,  0,#0
+              WIDTH/2 + 20,  0,#1
+              WIDTH/2 + 20, 40,#2
+              WIDTH/2 - 20, 40,#3
+              ]
+    drawshape = basicbox.create_polygon(points, outline='red', fill='red')
+
+def startgame():
+    global rand_shape, pickone
+    pickone = [I_shape, O_shape]
+    rand_shape = random.choice(pickone)()
+
+    autofall = True
+    while autofall:
+        time.sleep(1)
+        basicbox.move(drawshape, 0, 20)
+        countpointsinfig()
+
+
+def leftmove(event):
+    countpointsinfig()
+    basicbox.move(drawshape, -20, 0)
+
+def rightmove(event):
+    countpointsinfig()
+    basicbox.move(drawshape, 20, 0)
+
+def downmove(event):
+    countpointsinfig()
+    basicbox.move(drawshape, 0, 20)
+
+
+root.bind('<Left>', leftmove)
+root.bind('<Right>', rightmove)
+root.bind('<Up>', upmove)
+root.bind('<Down>', downmove)
+
+startgame()
+root.mainloop()
